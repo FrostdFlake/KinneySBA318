@@ -12,11 +12,50 @@ let data = [
     {id:5, name:"Zara", age:27}
 ];
 
-app.get("/", (req, res) => {
+const iGuessItDoesTheThing = (req, res, next) => {
+    console.log('Thing Works');
+    next();
+};
+
+const itDoesDoThing = (req, res, next) => {
+    console.log('Thing Works Well!');
+    next();
+};
+
+const errorHandler = (err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Something went wrong!');
+};
+
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(iGuessItDoesTheThing);
+app.use(itDoesDoThing);
+
+// Routes
+// const usersRouter = require('./routes/users');
+// const postsRouter = require('./routes/posts');
+// const commentsRouter = require('./routes/comments');
+
+// app.use('/users', usersRouter);
+// app.use('/posts', postsRouter);
+// app.use('/comments', commentsRouter);
+
+app.use(errorHandler);
+
+
+app.use(express.static('KinneySBA318'));
+app.set('view engine', 'html');
+app.engine('html', require('ejs').renderFile);
+
+
+app.get('/', (req, res) => {
+    res.render('index');
     res.json(data);
 });
 
-app.post("/", (req, res) => {
+app.post('/', (req, res) => {
     data.push(req.body);
     res.json(data);
 });
